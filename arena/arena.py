@@ -4,31 +4,36 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import random
 
-from constants import *
-from cube import *
-from pyramid import *
-from wall import *
+from arena.constants import *
+from arena.cube import *
+from arena.pyramid import *
+from arena.wall import *
 
-ground_vertices = ((-GROUND_X_LENGTH/2,-ROBOT_HEIGHT,GROUND_Z_LENGTH/2),
-                (GROUND_X_LENGTH/2,-ROBOT_HEIGHT,GROUND_Z_LENGTH/2),
-                (GROUND_X_LENGTH/2,-ROBOT_HEIGHT,-GROUND_Z_LENGTH/2),
-                (-GROUND_X_LENGTH/2,-ROBOT_HEIGHT,-GROUND_Z_LENGTH/2))
+ground_vertices = ((-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
+                   (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
+                   (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, -GROUND_Z_LENGTH / 2),
+                   (-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, -GROUND_Z_LENGTH / 2))
+
 
 def Ground():
     glBegin(GL_QUADS)
     x = 0
     for vertex in ground_vertices:
-        x+=1
-        glColor3fv((0,1,1))
+        x += 1
+        glColor3fv((0, 1, 1))
         glVertex3fv(vertex)
     glEnd()
 
+
+def startLife(fsm):
+    return random.randint(0,500)
+
 def main():
     pygame.init()
-    display = (800,600)
-    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+    display = (800, 600)
+    pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, 2, 0.1, 150.0)
-    glTranslatef(0,0,0)
+    glTranslatef(0, 0, 0)
     x_move = 0
     y_move = 0
     cube_dict = {}
@@ -68,8 +73,8 @@ def main():
                     y_move = 0
                 if event.key == pygame.K_DOWN:
                     y_move = 0
-        glClear((GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT))
-        glTranslatef(x_move,y_move,0.1)
+        glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
+        glTranslatef(x_move, y_move, 0.1)
         glRotatef(_cameraAngle, 0.0, 1.0, 0.0)
         _cameraAngle = 0
         Ground()
@@ -80,4 +85,6 @@ def main():
             Pyramids(pyramid_dict[pyramid])
         pygame.display.flip()
 
-main()
+
+if __name__ == '__main__':
+    main()
