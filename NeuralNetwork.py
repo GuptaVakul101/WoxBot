@@ -28,7 +28,6 @@ def NeuralNetwork(img, color):
     left_count = countPixelsOfColor(img_left, color)
     center_count = countPixelsOfColor(img_center, color)
     right_count = countPixelsOfColor(img_right, color)
-    print(left_count, center_count, right_count)
 
     max_count = max(left_count,right_count,center_count)
     if max_count < THRESHOLD:
@@ -43,5 +42,3 @@ def NeuralNetwork(img, color):
 
 # image = cv2.imread('image.jpg')
 # print(NeuralNetwork(image, [0, 255, 255]))
-
-
