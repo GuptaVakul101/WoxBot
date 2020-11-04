@@ -13,7 +13,7 @@ def constructFSM(chromosome):
     def next_move(i):
         ''' Input is a 4 bit input, It can be from 0....15, extract the 2*i and 2*i + 1 '''
         output = chromosome[2*i:2*i+2]
-        return output
+        return int(output, 2)
 
     return next_move  # FUNCTION OBJECT
 

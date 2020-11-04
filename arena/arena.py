@@ -37,8 +37,8 @@ def Ground():
 
 
 def startLife(fsm):
-    arena()
-    return random.randint(0,500)
+    time = arena(fsm)
+    return time
 
 
 def dist(x1, y1, x2, y2):
@@ -53,7 +53,7 @@ def change_life(life, x, z):
             life += LIFE_FACTOR
     return life
 
-def arena():
+def arena(fsm):
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
@@ -99,8 +99,7 @@ def arena():
         red_code = NeuralNetwork(open_cv_image, [0, 0, 255])
         code = (yellow_code<<2) + red_code
 
-        # next_state = next_move(code)
-        next_state = 1
+        next_state = fsm(code)
 
         if next_state == 0:
             print('Turn left')
