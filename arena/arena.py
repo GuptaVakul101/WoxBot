@@ -83,18 +83,13 @@ def arena(fsm):
             pygame.quit()
             return i
 
-        # read the colour buffer
-        pixels = glReadPixels(0, 0, 800, 600,
-                                 GL_RGB, GL_UNSIGNED_BYTE)
-        # convert to PIL image
+        pixels = glReadPixels(0, 0, 800, 600, GL_RGB, GL_UNSIGNED_BYTE)
         image = Image.frombytes('RGB', (800, 600), pixels)
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
         pil_image = image.convert('RGB')
         open_cv_image = np.array(pil_image)
-        # Convert RGB to BGR
         open_cv_image = open_cv_image[:, :, ::-1].copy()
-        # cv2.imshow('window1', open_cv_image)
-        # cv2.waitKey(0)
+
         yellow_code = NeuralNetwork(open_cv_image, [0, 255, 255])
         red_code = NeuralNetwork(open_cv_image, [0, 0, 255])
         code = (yellow_code<<2) + red_code
@@ -151,8 +146,10 @@ def arena(fsm):
             Pyramids(pyramid_dict[pyramid])
 
         life = change_life(life, x, z)
+        life -= 1
         print('Current life', life)
-
+        print("Iteration", i)
+        # sleep(0)
         pygame.display.flip()
 
     pygame.quit()
