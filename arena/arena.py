@@ -53,6 +53,15 @@ def change_life(life, x, z):
             life += LIFE_FACTOR
     return life
 
+
+def check_location_bounds(x, z):
+    if abs(x) >= GROUND_X_LENGTH / 2:
+        return False
+    if abs(z) >= GROUND_Z_LENGTH / 2:
+        return False
+    return True
+
+
 def arena(fsm):
     pygame.init()
     display = (800, 600)
@@ -135,6 +144,26 @@ def arena(fsm):
         elif direction == 3:
             x_move = -MOVE_SIZE
             x -= MOVE_SIZE
+
+
+        if not check_location_bounds(x, z):
+            _cameraAngle += 180
+            _cameraAngle %= 360
+            direction += 2
+            direction %= 4
+            if direction == 0:
+                z_move = MOVE_SIZE
+                z += MOVE_SIZE
+            elif direction == 1:
+                x_move = MOVE_SIZE
+                x += MOVE_SIZE
+            elif direction == 2:
+                z_move = -MOVE_SIZE
+                z -= MOVE_SIZE
+            elif direction == 3:
+                x_move = -MOVE_SIZE
+                x -= MOVE_SIZE
+
 
         glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
         glTranslatef(x_move, y_move, z_move)
