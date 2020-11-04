@@ -9,4 +9,5 @@ WALL_HEIGHT = 20
 
 
 INITIAL_LIFE = 100
-MAX_LIFE = 60*(10**8)
+MIN_LIFE = 0
+MAX_TIME = 60*(10**8)   # 60 sec

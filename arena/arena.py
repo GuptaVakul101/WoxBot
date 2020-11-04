@@ -43,70 +43,88 @@ def arena():
     glTranslatef(0, 0, 0)
     x_move = 0
     y_move = 0
+    z_move = 0
+    direction = 0
+    _cameraAngle = 0
+
     cube_dict = {}
     pyramid_dict = {}
     for x in range(NUM_CUBES):
         cube_dict[x] = setCubeVertices()
     for x in range(NUM_PYRAMIDS):
         pyramid_dict[x] = setPyramidVertices()
-    object_passed = False
-    _cameraAngle = 0
-    for i in range(0, MAX_LIFE):
-        # image = cv2.transpose(image)
-        # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        # code = NeuralNetwork(image, [0, 255, 255])
-        # print(code)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    x_move = 1
-                if event.key == pygame.K_RIGHT:
-                    x_move = -1
-                if event.key == pygame.K_UP:
-                    y_move = -1
-                if event.key == pygame.K_DOWN:
-                    y_move = 1
-                if event.key == pygame.K_d:
-                    _cameraAngle += 90
-                    _cameraAngle %= 360
-                if event.key == pygame.K_a:
-                    _cameraAngle += 270
-                    _cameraAngle %= 360
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
-                    x_move = 0
-                if event.key == pygame.K_RIGHT:
-                    x_move = 0
-                if event.key == pygame.K_UP:
-                    y_move = 0
-                if event.key == pygame.K_DOWN:
-                    y_move = 0
+
+    life = INITIAL_LIFE
+    for i in range(0, MAX_TIME):
+        if life < MIN_LIFE:
+            pygame.quit()
+            return i
+
+        # read the colour buffer
+        pixels = glReadPixels(0, 0, 800, 600,
+                                 GL_RGB, GL_UNSIGNED_BYTE)
+        # convert to PIL image
+        image = Image.frombytes('RGB', (800, 600), pixels)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+        pil_image = image.convert('RGB')
+        open_cv_image = np.array(pil_image)
+        # Convert RGB to BGR
+        open_cv_image = open_cv_image[:, :, ::-1].copy()
+        # cv2.imshow('window1', open_cv_image)
+        # cv2.waitKey(0)
+        yellow_code = NeuralNetwork(open_cv_image, [0, 255, 255])
+        red_code = NeuralNetwork(open_cv_image, [0, 0, 255])
+        code = (yellow_code<<2) + red_code
+
+        # next_state = next_move(code)
+        next_state = 1
+
+        if next_state == 0:
+            print('Turn left')
+            _cameraAngle += 270
+            _cameraAngle %= 360
+            direction += 1
+            direction %= 4
+        elif next_state == 1:
+            print('Go straight ahead')
+            pass
+        elif next_state == 2:
+            print('Turn right')
+            _cameraAngle += 90
+            _cameraAngle %= 360
+            direction += 3
+            direction %= 4
+        elif next_state == 3:
+            print('Go backwards')
+            _cameraAngle += 180
+            _cameraAngle %= 360
+            direction += 2
+            direction %= 4
+
+        if direction == 0:
+            z_move = 1
+        elif direction == 1:
+            x_move = 1
+        elif direction == 2:
+            z_move = -1
+        elif direction == 3:
+            x_move = -1
+
         glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
-        glTranslatef(x_move, y_move, 0.1)
+        glTranslatef(x_move, y_move, z_move)
         glRotatef(_cameraAngle, 0.0, 1.0, 0.0)
         _cameraAngle = 0
+        x_move = 0
+        z_move = 0
+
         Ground()
         Walls()
         for cube in cube_dict:
             Cubes(cube_dict[cube])
         for pyramid in pyramid_dict:
             Pyramids(pyramid_dict[pyramid])
+
         pygame.display.flip()
-        if i == 100:
-            # read the colour buffer
-            pixels = glReadPixels(0, 0, 800, 600,
-                                     GL_RGB, GL_UNSIGNED_BYTE)
-            # convert to PIL image
-            image = Image.frombytes('RGB', (800, 600), pixels)
-            image = image.transpose(Image.FLIP_TOP_BOTTOM)
-            pil_image = image.convert('RGB')
-            open_cv_image = np.array(pil_image)
-            # Convert RGB to BGR
-            open_cv_image = open_cv_image[:, :, ::-1].copy()
-            cv2.imshow('window1', open_cv_image)
-            cv2.waitKey(0)
-            code = NeuralNetwork(open_cv_image, [0, 255, 255])
-            print(code)
+
+    pygame.quit()
+    return MAX_TIME
