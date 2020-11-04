@@ -54,7 +54,7 @@ def setCubeVertices():
         new_vert.append(new_y)
         new_vert.append(new_z)
         new_vertices.append(new_vert)
-    return new_vertices
+    return new_vertices, x_value_change, z_value_change
 
 
 def Cubes(new_vertices):
