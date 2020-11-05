@@ -19,6 +19,8 @@ cube_dict = {}
 pyramid_dict = {}
 global_cube = []
 global_pyramid = []
+dictIDCube = {}
+dictIDPyramid = {}
 
 ground_vertices = ((-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
                    (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
@@ -45,12 +47,47 @@ def dist(x1, y1, x2, y2):
     return math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
 
 def change_life(life, x, z):
+    global cube_dict
+    global pyramid_dict
+    global global_cube
+    global global_pyramid
+    global dictIDCube
+    global dictIDPyramid
+
+    newGlobalCube = []
+    newGlobalPyramid = []
+
     for (cube_x, cube_z) in global_cube:
         if dist(x, z, cube_x, cube_z) <= RADIUS:
             life -= LIFE_FACTOR
+
+            new_vertices, x_value, z_value = setCubeVertices()
+            id = dictIDCube[(cube_x, cube_z)]
+            dictIDCube.pop((cube_x, cube_z))
+            cube_dict[id] = new_vertices
+            dictIDCube[(x_value, z_value)] = id
+
+            newGlobalCube.append((x_value, z_value))
+        else:
+            newGlobalCube.append((cube_x, cube_z))
+
     for (pyr_x, pyr_z) in global_pyramid:
         if dist(x, z, pyr_x, pyr_z) <= RADIUS:
             life += LIFE_FACTOR
+
+            new_vertices, x_value, z_value = setPyramidVertices()
+            id = dictIDPyramid[(pyr_x, pyr_z)]
+            dictIDPyramid.pop((pyr_x, pyr_z))
+            pyramid_dict[id] = new_vertices
+            dictIDPyramid[(x_value, z_value)] = id
+
+            newGlobalPyramid.append((x_value, z_value))
+        else:
+            newGlobalPyramid.append((pyr_x, pyr_z))
+
+    global_cube = newGlobalCube
+    global_pyramid = newGlobalPyramid
+
     return life
 
 
@@ -76,14 +113,16 @@ def arena(fsm):
     direction = 0
     _cameraAngle = 0
 
-    for x in range(NUM_CUBES):
+    for i in range(NUM_CUBES):
         new_vertices, x_value, z_value = setCubeVertices()
-        cube_dict[x] = new_vertices
+        cube_dict[i] = new_vertices
+        dictIDCube[(x_value, z_value)] = i
         global_cube.append((x_value, z_value))
 
-    for x in range(NUM_PYRAMIDS):
+    for i in range(NUM_PYRAMIDS):
         new_vertices, x_value, z_value = setPyramidVertices()
-        pyramid_dict[x] = new_vertices
+        pyramid_dict[i] = new_vertices
+        dictIDPyramid[(x_value, z_value)] = i
         global_pyramid.append((x_value, z_value))
 
     life = INITIAL_LIFE
@@ -142,24 +181,15 @@ def arena(fsm):
 
 
         if not check_location_bounds(x, z):
-            _cameraAngle += 180
-            _cameraAngle %= 360
-            direction += 2
-            direction %= 4
-            if direction == 0:
-                z_move = MOVE_SIZE
-                z += MOVE_SIZE
-            elif direction == 1:
-                x_move = MOVE_SIZE
-                x += MOVE_SIZE
-            elif direction == 2:
-                z_move = -MOVE_SIZE
-                z -= MOVE_SIZE
-            elif direction == 3:
-                x_move = -MOVE_SIZE
-                x -= MOVE_SIZE
-
-
+            if abs(x) >= GROUND_X_LENGTH / 2 or abs(z) >= GROUND_Z_LENGTH / 2:
+                x_move = -x
+                x = 0
+                z_move = -z
+                z = 0
+        print("x: ", x)
+        print("z: ", z)
+        print("x_move: ", x_move)
+        print("z_move: ", z_move)
         glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
         glTranslatef(x_move, y_move, z_move)
         glRotatef(_cameraAngle, 0.0, 1.0, 0.0)
@@ -178,7 +208,7 @@ def arena(fsm):
         life -= 1
         print('Current life', life)
         print("Iteration", i)
-        # sleep(0)
+        sleep(0.2)
         pygame.display.flip()
 
     pygame.quit()
