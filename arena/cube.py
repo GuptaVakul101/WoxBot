@@ -41,9 +41,9 @@ def Cube():
 
 
 def setCubeVertices():
-    x_value_change = random.randrange(-GROUND_X_LENGTH + CUBE_SIDE, GROUND_X_LENGTH - CUBE_SIDE)
+    x_value_change = random.randrange(-OBST_X_LENGTH + CUBE_SIDE, OBST_X_LENGTH - CUBE_SIDE)
     y_value_change = 0
-    z_value_change = random.randrange(-GROUND_Z_LENGTH + CUBE_SIDE, GROUND_Z_LENGTH - CUBE_SIDE)
+    z_value_change = random.randrange(-OBST_Z_LENGTH + CUBE_SIDE, OBST_Z_LENGTH - CUBE_SIDE)
     new_vertices = []
     for vert in cubeVertices:
         new_vert = []

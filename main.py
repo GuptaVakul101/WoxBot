@@ -1,4 +1,5 @@
 import random
+import statistics
 from time import sleep
 
 from arena import arena
@@ -54,18 +55,29 @@ def main():
         ROBOTS_LIST.append(chromosome)
 
     CURR_ROBOTS = ROBOTS_LIST
+    robotsData = {}
+    generation = 1
     while len(CURR_ROBOTS) != 1:
         lives = []
+        timeLivedList = []
         for robot in CURR_ROBOTS:
             fsm = constructFSM(robot)
             timeLived = arena.startLife(fsm)
+            timeLivedList.append(timeLived)
             lives.append((timeLived, robot))
             print("Robot #", robot, " Time Lived: ", timeLived)
             sleep(2)
         lives.sort()
         N = len(lives)
+        mean = statistics.mean(timeLivedList)
+        median = statistics.median(timeLivedList)
+        print("Generation: ", generation)
+        print("Mean: ", mean)
+        print("Median: ", median)
+        robotsData[generation] = lives
         CURR_ROBOTS = [robot for _, robot in lives[N // 2:N]]
         mutateRobots(CURR_ROBOTS)
+        generation += 1
     print("Final Living Robot:")
     print(CURR_ROBOTS)
 

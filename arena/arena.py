@@ -98,8 +98,23 @@ def check_location_bounds(x, z):
         return False
     return True
 
+def clearGlobal():
+    global cube_dict
+    global pyramid_dict
+    global global_cube
+    global global_pyramid
+    global dictIDCube
+    global dictIDPyramid
+
+    cube_dict = {}
+    pyramid_dict = {}
+    global_cube = []
+    global_pyramid = []
+    dictIDCube = {}
+    dictIDPyramid = {}
 
 def arena(fsm):
+    clearGlobal()
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
@@ -145,22 +160,22 @@ def arena(fsm):
         next_state = fsm(code)
 
         if next_state == 0:
-            print('Turn left')
+            # print('Turn left')
             _cameraAngle += 270
             _cameraAngle %= 360
             direction += 1
             direction %= 4
         elif next_state == 1:
-            print('Go straight ahead')
+            # print('Go straight ahead')
             pass
         elif next_state == 2:
-            print('Turn right')
+            # print('Turn right')
             _cameraAngle += 90
             _cameraAngle %= 360
             direction += 3
             direction %= 4
         elif next_state == 3:
-            print('Go backwards')
+            # print('Go backwards')
             _cameraAngle += 180
             _cameraAngle %= 360
             direction += 2
@@ -186,10 +201,10 @@ def arena(fsm):
                 x = 0
                 z_move = -z
                 z = 0
-        print("x: ", x)
-        print("z: ", z)
-        print("x_move: ", x_move)
-        print("z_move: ", z_move)
+        # print("x: ", x)
+        # print("z: ", z)
+        # print("x_move: ", x_move)
+        # print("z_move: ", z_move)
         glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
         glTranslatef(x_move, y_move, z_move)
         glRotatef(_cameraAngle, 0.0, 1.0, 0.0)
@@ -198,7 +213,7 @@ def arena(fsm):
         z_move = 0
 
         Ground()
-        Walls()
+        # Walls()
         for cube in cube_dict:
             Cubes(cube_dict[cube])
         for pyramid in pyramid_dict:
@@ -206,9 +221,9 @@ def arena(fsm):
 
         life = change_life(life, x, z)
         life -= 1
-        print('Current life', life)
-        print("Iteration", i)
-        sleep(0.2)
+        # print('Current life', life)
+        # print("Iteration", i)
+        # sleep(0.2)
         pygame.display.flip()
 
     pygame.quit()
