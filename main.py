@@ -3,12 +3,27 @@ import statistics
 from time import sleep
 
 from arena import arena
+from matplotlib import pyplot as plt
+import numpy as np
 
 ROBOTS_LIST = []
-NUM_ROBOTS = 64
+NUM_ROBOTS = 8
 CHROMOSOME_LENGTH = 32
 CHROMOSOME_BITS_TO_MUTATE = 5
 PERCENTAGE_ROBOTS_TO_MUTATE = 1
+PERFORMANCE_MEANS = []
+PERFORMANCE_MEDIANS = []
+
+def plotList(y, label=None):
+    x = np.arange(1, len(y)+1)
+    plt.clf()
+    plt.xlabel("Generations")
+    plt.xticks(x)
+    if label is not None:
+        plt.ylabel(label)
+    plt.plot(x, y)
+    plt.savefig("Plot_" + label + ".png")
+
 
 def constructFSM(chromosome):
 
@@ -59,27 +74,32 @@ def main():
     generation = 1
     while len(CURR_ROBOTS) != 1:
         lives = []
-        timeLivedList = []
+        performanceList = []
         for robot in CURR_ROBOTS:
             fsm = constructFSM(robot)
-            timeLived = arena.startLife(fsm)
-            timeLivedList.append(timeLived)
-            lives.append((timeLived, robot))
-            print("Robot #", robot, " Time Lived: ", timeLived)
+            performance = arena.startLife(fsm)
+            performanceList.append(performance)
+            lives.append((performance, robot))
+            print("Robot #", robot, " Time Lived: ", performance)
             sleep(2)
         lives.sort()
         N = len(lives)
-        mean = statistics.mean(timeLivedList)
-        median = statistics.median(timeLivedList)
-        print("Generation: ", generation)
-        print("Mean: ", mean)
+        mean = statistics.mean(performanceList)
+        median = statistics.median(performanceList)
+        print("Generation #", generation)
+        print("Mean of Performance: ", mean)
         print("Median: ", median)
         robotsData[generation] = lives
         CURR_ROBOTS = [robot for _, robot in lives[N // 2:N]]
         mutateRobots(CURR_ROBOTS)
+        PERFORMANCE_MEANS.append(mean)
+        PERFORMANCE_MEDIANS.append(median)
         generation += 1
     print("Final Living Robot:")
     print(CURR_ROBOTS)
+    plotList(PERFORMANCE_MEDIANS, 'Medians')
+    plotList(PERFORMANCE_MEANS, "Mean")
+
 
 if __name__ == '__main__':
     main()
