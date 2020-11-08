@@ -62,7 +62,7 @@ def main():
         timeLivedList = []
         for robot in CURR_ROBOTS:
             fsm = constructFSM(robot)
-            timeLived = arena.startLife(fsm)
+            timeLived = arena.startLife(fsm, "life")
             timeLivedList.append(timeLived)
             lives.append((timeLived, robot))
             print("Robot #", robot, " Time Lived: ", timeLived)

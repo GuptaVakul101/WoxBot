@@ -28,6 +28,8 @@ dictIDGreenSphere = {}
 blue_sphere_dict = {}
 global_blue_sphere = []
 dictIDBlueSphere = {}
+maxMoney = INITIAL_MONEY
+maxLife = INITIAL_LIFE
 
 ground_vertices = ((-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
                    (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
@@ -45,8 +47,8 @@ def Ground():
     glEnd()
 
 
-def startLife(fsm):
-    time = arena(fsm)
+def startLife(fsm, perf):
+    time = arena(fsm, perf)
     return time
 
 
@@ -63,9 +65,10 @@ def change_money(money, x, z):
 
     newGlobalGreenSphere = []
     newGlobalBlueSphere = []
-
+    sum = 0
     for (sphere_x, sphere_z) in global_blue_sphere:
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
+            sum += 1
             money -= MONEY_FACTOR
 
             new_vertices, x_value, z_value = setCubeVertices()
@@ -77,9 +80,11 @@ def change_money(money, x, z):
             newGlobalBlueSphere.append((x_value, z_value))
         else:
             newGlobalBlueSphere.append((sphere_x, sphere_z))
-
+    # print("NUMBLUESPHERES ", sum)
+    sum = 0
     for (sphere_x, sphere_z) in global_green_sphere:
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
+            sum += 1
             money += MONEY_FACTOR
 
             new_vertices, x_value, z_value = setPyramidVertices()
@@ -91,7 +96,7 @@ def change_money(money, x, z):
             newGlobalGreenSphere.append((x_value, z_value))
         else:
             newGlobalGreenSphere.append((sphere_x, sphere_z))
-
+    # print("NUMGREENSPHERES ", sum)
     global_green_sphere = newGlobalGreenSphere
     global_blue_sphere = newGlobalBlueSphere
 
@@ -107,9 +112,10 @@ def change_life(life, x, z):
 
     newGlobalCube = []
     newGlobalPyramid = []
-
+    sum = 0
     for (cube_x, cube_z) in global_cube:
         if dist(x, z, cube_x, cube_z) <= RADIUS:
+            sum += 1
             life -= LIFE_FACTOR
 
             new_vertices, x_value, z_value = setCubeVertices()
@@ -121,9 +127,11 @@ def change_life(life, x, z):
             newGlobalCube.append((x_value, z_value))
         else:
             newGlobalCube.append((cube_x, cube_z))
-
+    # print("NUMCUBES ", sum)
+    sum = 0
     for (pyr_x, pyr_z) in global_pyramid:
         if dist(x, z, pyr_x, pyr_z) <= RADIUS:
+            sum += 1
             life += LIFE_FACTOR
 
             new_vertices, x_value, z_value = setPyramidVertices()
@@ -135,7 +143,7 @@ def change_life(life, x, z):
             newGlobalPyramid.append((x_value, z_value))
         else:
             newGlobalPyramid.append((pyr_x, pyr_z))
-
+    # print("NUMPYRAMIDS ", sum)
     global_cube = newGlobalCube
     global_pyramid = newGlobalPyramid
 
@@ -162,6 +170,8 @@ def clearGlobal():
     global blue_sphere_dict
     global global_blue_sphere
     global dictIDBlueSphere
+    global maxMoney
+    global maxLife
 
     cube_dict = {}
     pyramid_dict = {}
@@ -175,9 +185,17 @@ def clearGlobal():
     blue_sphere_dict = {}
     global_blue_sphere = []
     dictIDBlueSphere = {}
+    maxMoney = INITIAL_MONEY
+    maxLife = INITIAL_LIFE
 
-def arena(fsm):
+def getPerformance(maxLife, maxMoney):
+    return ((maxLife * maxMoney) - (INITIAL_LIFE * INITIAL_MONEY))
+
+def arena(fsm, perf):
+    global maxLife
+    global maxMoney
     clearGlobal()
+
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
@@ -220,7 +238,14 @@ def arena(fsm):
     for i in range(0, MAX_TIME):
         if life < MIN_LIFE or money < MIN_MONEY:
             pygame.quit()
-            return i
+            if perf == "life":
+                return i
+            if perf == "max-money":
+                return maxMoney
+            if perf == "max-health":
+                return maxLife
+            if perf == "money-health":
+                return getPerformance(maxLife, maxMoney)
 
         pixels = glReadPixels(0, 0, 800, 600, GL_RGB, GL_UNSIGNED_BYTE)
         image = Image.frombytes('RGB', (800, 600), pixels)
@@ -301,11 +326,22 @@ def arena(fsm):
         money = change_money(money, x, z)
         life -= 1
         money -= 1
-        print('Current life', life)
-        print('Current money', money)
-        print("Iteration", i)
-        sleep(0.2)
+        maxLife = max(maxLife, life)
+        maxMoney = max(maxMoney, money)
+        # print("x", x)
+        # print("z", z)
+        # print('Current life', life)
+        # print('Current money', money)
+        # print("Iteration", i)
+        # sleep(1)
         pygame.display.flip()
 
     pygame.quit()
-    return MAX_TIME
+    if perf == "life":
+        return MAX_TIME
+    if perf == "max-money":
+        return maxMoney
+    if perf == "max-health":
+        return maxLife
+    if perf == "money-health":
+        return getPerformance(maxLife, maxMoney)
