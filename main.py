@@ -7,8 +7,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 ROBOTS_LIST = []
-NUM_ROBOTS = 8
-CHROMOSOME_LENGTH = 32
+NUM_ROBOTS = 64
+CHROMOSOME_LENGTH = 192
 CHROMOSOME_BITS_TO_MUTATE = 5
 PERCENTAGE_ROBOTS_TO_MUTATE = 1
 PERFORMANCE_MEANS = []
@@ -26,11 +26,16 @@ def plotList(y, label=None):
 
 
 def constructFSM(chromosome):
+    random_choices = [random.randint(1, 5), random.randint(1, 5)]
 
     def next_move(i):
-        ''' Input is a 4 bit input, It can be from 0....15, extract the 2*i and 2*i + 1 '''
-        output = chromosome[2*i:2*i+2]
-        return int(output, 2)
+        ''' Input is a 6 bit input, It can be from 0....63, extract the 3*i, 3*i + 1 and 3*i + 2 '''
+        output = chromosome[3*i:3*i+3]
+        int_output = int(output, 2)
+        if int_output > 5:
+            int_output -= 5
+            int_output = random_choices[int_output]
+        return int_output
 
     return next_move  # FUNCTION OBJECT
 
