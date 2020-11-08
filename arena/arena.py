@@ -8,6 +8,7 @@ from arena.constants import *
 from arena.cube import *
 from arena.pyramid import *
 from arena.wall import *
+from arena.sphere import *
 from NeuralNetwork import NeuralNetwork
 from time import sleep
 from PIL import Image
@@ -21,6 +22,9 @@ global_cube = []
 global_pyramid = []
 dictIDCube = {}
 dictIDPyramid = {}
+sphere_dict = {}
+global_sphere = []
+dictIDSphere = {}
 
 ground_vertices = ((-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
                    (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
@@ -128,17 +132,23 @@ def arena(fsm):
     direction = 0
     _cameraAngle = 0
 
-    for i in range(NUM_CUBES):
-        new_vertices, x_value, z_value = setCubeVertices()
-        cube_dict[i] = new_vertices
-        dictIDCube[(x_value, z_value)] = i
-        global_cube.append((x_value, z_value))
+    for i in range(NUM_SPHERES):
+        (x_value, z_value) = setSphereVertices()
+        sphere_dict[i] = (x_value, z_value)
+        dictIDSphere[(x_value, z_value)] = i
+        global_sphere.append((x_value, z_value))
 
     for i in range(NUM_PYRAMIDS):
         new_vertices, x_value, z_value = setPyramidVertices()
         pyramid_dict[i] = new_vertices
         dictIDPyramid[(x_value, z_value)] = i
         global_pyramid.append((x_value, z_value))
+
+    for i in range(NUM_CUBES):
+        new_vertices, x_value, z_value = setCubeVertices()
+        cube_dict[i] = new_vertices
+        dictIDCube[(x_value, z_value)] = i
+        global_cube.append((x_value, z_value))
 
     life = INITIAL_LIFE
     for i in range(0, MAX_TIME):
@@ -218,7 +228,9 @@ def arena(fsm):
             Cubes(cube_dict[cube])
         for pyramid in pyramid_dict:
             Pyramids(pyramid_dict[pyramid])
-
+        for sphere in sphere_dict:
+            Spheres(sphere_dict[sphere])
+        
         life = change_life(life, x, z)
         life -= 1
         # print('Current life', life)
