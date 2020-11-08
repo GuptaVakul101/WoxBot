@@ -22,9 +22,12 @@ global_cube = []
 global_pyramid = []
 dictIDCube = {}
 dictIDPyramid = {}
-sphere_dict = {}
-global_sphere = []
-dictIDSphere = {}
+green_sphere_dict = {}
+global_green_sphere = []
+dictIDGreenSphere = {}
+blue_sphere_dict = {}
+global_blue_sphere = []
+dictIDBlueSphere = {}
 
 ground_vertices = ((-GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
                    (GROUND_X_LENGTH / 2, -ROBOT_HEIGHT, GROUND_Z_LENGTH / 2),
@@ -49,6 +52,50 @@ def startLife(fsm):
 
 def dist(x1, y1, x2, y2):
     return math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
+
+def change_money(money, x, z):
+    global green_sphere_dict
+    global global_green_sphere
+    global dictIDGreenSphere
+    global blue_sphere_dict
+    global global_blue_sphere
+    global dictIDBlueSphere
+
+    newGlobalGreenSphere = []
+    newGlobalBlueSphere = []
+
+    for (sphere_x, sphere_z) in global_blue_sphere:
+        if dist(x, z, sphere_x, sphere_z) <= RADIUS:
+            money -= MONEY_FACTOR
+
+            (x_value, z_value) = setSphereVertices()
+            id = dictIDBlueSphere[(sphere_x, sphere_z)]
+            dictIDBlueSphere.pop((sphere_x, sphere_z))
+            blue_sphere_dict[id] = (x_value, z_value)
+            dictIDBlueSphere[(x_value, z_value)] = id
+
+            newGlobalBlueSphere.append((x_value, z_value))
+        else:
+            newGlobalBlueSphere.append((sphere_x, sphere_z))
+
+    for (sphere_x, sphere_z) in global_green_sphere:
+        if dist(x, z, sphere_x, sphere_z) <= RADIUS:
+            money += MONEY_FACTOR
+
+            (x_value, z_value) = setSphereVertices()
+            id = dictIDGreenSphere[(sphere_x, sphere_z)]
+            dictIDGreenSphere.pop((sphere_x, sphere_z))
+            green_sphere_dict[id] = (x_value, z_value)
+            dictIDGreenSphere[(x_value, z_value)] = id
+
+            newGlobalGreenSphere.append((x_value, z_value))
+        else:
+            newGlobalGreenSphere.append((sphere_x, sphere_z))
+
+    global_green_sphere = newGlobalGreenSphere
+    global_blue_sphere = newGlobalBlueSphere
+
+    return money
 
 def change_life(life, x, z):
     global cube_dict
@@ -109,6 +156,12 @@ def clearGlobal():
     global global_pyramid
     global dictIDCube
     global dictIDPyramid
+    global green_sphere_dict
+    global global_green_sphere
+    global dictIDGreenSphere
+    global blue_sphere_dict
+    global global_blue_sphere
+    global dictIDBlueSphere
 
     cube_dict = {}
     pyramid_dict = {}
@@ -116,6 +169,12 @@ def clearGlobal():
     global_pyramid = []
     dictIDCube = {}
     dictIDPyramid = {}
+    green_sphere_dict = {}
+    global_green_sphere = []
+    dictIDGreenSphere = {}
+    blue_sphere_dict = {}
+    global_blue_sphere = []
+    dictIDBlueSphere = {}
 
 def arena(fsm):
     clearGlobal()
@@ -134,9 +193,15 @@ def arena(fsm):
 
     for i in range(NUM_SPHERES):
         (x_value, z_value) = setSphereVertices()
-        sphere_dict[i] = (x_value, z_value)
-        dictIDSphere[(x_value, z_value)] = i
-        global_sphere.append((x_value, z_value))
+        blue_sphere_dict[i] = (x_value, z_value)
+        dictIDBlueSphere[(x_value, z_value)] = i
+        global_blue_sphere.append((x_value, z_value))
+
+    for i in range(NUM_SPHERES):
+        (x_value, z_value) = setSphereVertices()
+        green_sphere_dict[i] = (x_value, z_value)
+        dictIDGreenSphere[(x_value, z_value)] = i
+        global_green_sphere.append((x_value, z_value))
 
     for i in range(NUM_PYRAMIDS):
         new_vertices, x_value, z_value = setPyramidVertices()
@@ -151,8 +216,9 @@ def arena(fsm):
         global_cube.append((x_value, z_value))
 
     life = INITIAL_LIFE
+    money = INITIAL_MONEY
     for i in range(0, MAX_TIME):
-        if life < MIN_LIFE:
+        if life < MIN_LIFE or money < MIN_MONEY:
             pygame.quit()
             return i
 
@@ -165,7 +231,9 @@ def arena(fsm):
 
         yellow_code = NeuralNetwork(open_cv_image, [0, 255, 255])
         red_code = NeuralNetwork(open_cv_image, [0, 0, 255])
-        code = (yellow_code<<2) + red_code
+        green_code = NeuralNetwork(open_cv_image, [0, 255, 0])
+        blue_code = NeuralNetwork(open_cv_image, [255, 0, 0])
+        code = (green_code<<6) + (blue_code<<4) + (yellow_code<<2) + red_code
 
         next_state = fsm(code)
 
@@ -211,10 +279,6 @@ def arena(fsm):
                 x = 0
                 z_move = -z
                 z = 0
-        # print("x: ", x)
-        # print("z: ", z)
-        # print("x_move: ", x_move)
-        # print("z_move: ", z_move)
         glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT))
         glTranslatef(x_move, y_move, z_move)
         glRotatef(_cameraAngle, 0.0, 1.0, 0.0)
@@ -228,14 +292,23 @@ def arena(fsm):
             Cubes(cube_dict[cube])
         for pyramid in pyramid_dict:
             Pyramids(pyramid_dict[pyramid])
-        for sphere in sphere_dict:
-            Spheres(sphere_dict[sphere])
-        
+        for sphere in green_sphere_dict:
+            glTranslatef(-x, 0, -z)
+            Spheres(green_sphere_dict[sphere], (0,1,0))
+            glTranslatef(x, 0, z)
+        for sphere in blue_sphere_dict:
+            glTranslatef(-x, 0, -z)
+            Spheres(blue_sphere_dict[sphere], (0,0,1))
+            glTranslatef(x, 0, z)
+
         life = change_life(life, x, z)
+        money = change_money(money, x, z)
         life -= 1
-        # print('Current life', life)
-        # print("Iteration", i)
-        # sleep(0.2)
+        money -= 1
+        print('Current life', life)
+        print('Current money', money)
+        print("Iteration", i)
+        sleep(0.2)
         pygame.display.flip()
 
     pygame.quit()
