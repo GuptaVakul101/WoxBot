@@ -33,7 +33,7 @@ def constructFSM(chromosome):
         output = chromosome[3*i:3*i+3]
         int_output = int(output, 2)
         if int_output > 5:
-            int_output -= 5
+            int_output -= 6
             int_output = random_choices[int_output]
         return int_output
 

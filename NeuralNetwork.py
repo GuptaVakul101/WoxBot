@@ -34,21 +34,21 @@ def NeuralNetwork(img, color):
     img_left_l_half_count = countPixelsOfColor(img_left_l_half, color)
     img_left_r_half_count = countPixelsOfColor(img_left_r_half, color)
     center_count = countPixelsOfColor(img_center, color)
-    img_right_l_half = countPixelsOfColor(img_right_l_half, color)
-    img_right_r_half = countPixelsOfColor(img_right_r_half, color)
+    img_right_l_half_count = countPixelsOfColor(img_right_l_half, color)
+    img_right_r_half_count = countPixelsOfColor(img_right_r_half, color)
 
-    max_count = max(img_left_l_half_count,img_left_r_half_count,center_count,img_right_l_half,img_right_r_half)
+    max_count = max(img_left_l_half_count,img_left_r_half_count,center_count,img_right_l_half_count,img_right_r_half_count)
     if max_count < THRESHOLD:
         return 0
     if max_count == img_left_l_half_count:
         return 1
     elif max_count == center_count:
         return 2
-    elif max_count == img_right_r_half:
+    elif max_count == img_right_r_half_count:
         return 3
     elif max_count == img_left_r_half_count:
         return 4
-    elif max_count == img_right_l_half:
+    elif max_count == img_right_l_half_count:
         return 5
 
 
