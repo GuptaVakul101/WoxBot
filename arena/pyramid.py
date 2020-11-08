@@ -47,12 +47,13 @@ def setPyramidVertices():
     return new_vertices, x_value_change, z_value_change
 
 
-def Pyramids(new_vertices):
+def Pyramids(new_vertices, color):
     glBegin(GL_TRIANGLES)
+    (R, G, B) = color
     for surface in pyramidSurfaces:
         x = 0
         for vertex in surface:
             x += 1
-            glColor3fv(pyramidColors[x])
+            glColor3fv(color)
             glVertex3fv(new_vertices[vertex])
     glEnd()

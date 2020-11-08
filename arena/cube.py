@@ -57,12 +57,13 @@ def setCubeVertices():
     return new_vertices, x_value_change, z_value_change
 
 
-def Cubes(new_vertices):
+def Cubes(new_vertices, color):
     glBegin(GL_QUADS)
+    (R, G, B) = color
     for surface in cubeSurfaces:
         x = 0
         for vertex in surface:
             x += 1
-            glColor3fv(cubeColors[x])
+            glColor3fv(color)
             glVertex3fv(new_vertices[vertex])
     glEnd()

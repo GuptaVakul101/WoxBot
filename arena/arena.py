@@ -68,10 +68,10 @@ def change_money(money, x, z):
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
             money -= MONEY_FACTOR
 
-            (x_value, z_value) = setSphereVertices()
+            new_vertices, x_value, z_value = setCubeVertices()
             id = dictIDBlueSphere[(sphere_x, sphere_z)]
             dictIDBlueSphere.pop((sphere_x, sphere_z))
-            blue_sphere_dict[id] = (x_value, z_value)
+            blue_sphere_dict[id] = new_vertices
             dictIDBlueSphere[(x_value, z_value)] = id
 
             newGlobalBlueSphere.append((x_value, z_value))
@@ -82,10 +82,10 @@ def change_money(money, x, z):
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
             money += MONEY_FACTOR
 
-            (x_value, z_value) = setSphereVertices()
+            new_vertices, x_value, z_value = setPyramidVertices()
             id = dictIDGreenSphere[(sphere_x, sphere_z)]
             dictIDGreenSphere.pop((sphere_x, sphere_z))
-            green_sphere_dict[id] = (x_value, z_value)
+            green_sphere_dict[id] = new_vertices
             dictIDGreenSphere[(x_value, z_value)] = id
 
             newGlobalGreenSphere.append((x_value, z_value))
@@ -192,14 +192,14 @@ def arena(fsm):
     _cameraAngle = 0
 
     for i in range(NUM_SPHERES):
-        (x_value, z_value) = setSphereVertices()
-        blue_sphere_dict[i] = (x_value, z_value)
+        new_vertices, x_value, z_value = setCubeVertices()
+        blue_sphere_dict[i] = new_vertices
         dictIDBlueSphere[(x_value, z_value)] = i
         global_blue_sphere.append((x_value, z_value))
 
     for i in range(NUM_SPHERES):
-        (x_value, z_value) = setSphereVertices()
-        green_sphere_dict[i] = (x_value, z_value)
+        new_vertices, x_value, z_value = setPyramidVertices()
+        green_sphere_dict[i] = new_vertices
         dictIDGreenSphere[(x_value, z_value)] = i
         global_green_sphere.append((x_value, z_value))
 
@@ -289,17 +289,13 @@ def arena(fsm):
         Ground()
         # Walls()
         for cube in cube_dict:
-            Cubes(cube_dict[cube])
+            Cubes(cube_dict[cube], (1,0,0))
         for pyramid in pyramid_dict:
-            Pyramids(pyramid_dict[pyramid])
+            Pyramids(pyramid_dict[pyramid], (1,1,0))
         for sphere in green_sphere_dict:
-            glTranslatef(-x, 0, -z)
-            Spheres(green_sphere_dict[sphere], (0,1,0))
-            glTranslatef(x, 0, z)
+            Pyramids(green_sphere_dict[sphere], (0,1,0))
         for sphere in blue_sphere_dict:
-            glTranslatef(-x, 0, -z)
-            Spheres(blue_sphere_dict[sphere], (0,0,1))
-            glTranslatef(x, 0, z)
+            Cubes(blue_sphere_dict[sphere], (0,0,1))
 
         life = change_life(life, x, z)
         money = change_money(money, x, z)
