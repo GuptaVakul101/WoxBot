@@ -160,39 +160,73 @@ def arena(fsm):
         next_state = fsm(code)
 
         if next_state == 0:
-            # print('Turn left')
+            print('Turn left')
             _cameraAngle += 270
             _cameraAngle %= 360
             direction += 1
             direction %= 4
         elif next_state == 1:
-            # print('Go straight ahead')
+            print('Go straight ahead')
             pass
         elif next_state == 2:
-            # print('Turn right')
+            print('Turn right')
             _cameraAngle += 90
             _cameraAngle %= 360
             direction += 3
             direction %= 4
         elif next_state == 3:
-            # print('Go backwards')
+            print('Go backwards')
             _cameraAngle += 180
             _cameraAngle %= 360
             direction += 2
             direction %= 4
+        elif next_state == 4:
+            print('Strafe left')
+            pass
+        elif next_state == 5:
+            print('Strafe right')
+            pass
 
         if direction == 0:
-            z_move = MOVE_SIZE
-            z += MOVE_SIZE
+            if next_state == 4:
+                x_move = -MOVE_SIZE
+                x -= MOVE_SIZE
+            elif next_state == 5:
+                x_move = MOVE_SIZE
+                x += MOVE_SIZE
+            else:
+                z_move = MOVE_SIZE
+                z += MOVE_SIZE
         elif direction == 1:
-            x_move = MOVE_SIZE
-            x += MOVE_SIZE
+            if next_state == 4:
+                z_move = MOVE_SIZE
+                z += MOVE_SIZE
+            elif next_state == 5:
+                z_move = -MOVE_SIZE
+                z -= MOVE_SIZE
+            else:
+                x_move = MOVE_SIZE
+                x += MOVE_SIZE
         elif direction == 2:
-            z_move = -MOVE_SIZE
-            z -= MOVE_SIZE
+            if next_state == 4:
+                x_move = MOVE_SIZE
+                x += MOVE_SIZE
+            elif next_state == 5:
+                x_move = -MOVE_SIZE
+                x -= MOVE_SIZE
+            else:
+                z_move = -MOVE_SIZE
+                z -= MOVE_SIZE
         elif direction == 3:
-            x_move = -MOVE_SIZE
-            x -= MOVE_SIZE
+            if next_state == 4:
+                z_move = -MOVE_SIZE
+                z -= MOVE_SIZE
+            elif next_state == 5:
+                z_move = MOVE_SIZE
+                z += MOVE_SIZE
+            else:
+                x_move = -MOVE_SIZE
+                x -= MOVE_SIZE
 
 
         if not check_location_bounds(x, z):
@@ -223,7 +257,7 @@ def arena(fsm):
         life -= 1
         # print('Current life', life)
         # print("Iteration", i)
-        # sleep(0.2)
+        sleep(1)
         pygame.display.flip()
 
     pygame.quit()
