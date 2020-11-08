@@ -69,7 +69,7 @@ def change_money(money, x, z):
     for (sphere_x, sphere_z) in global_blue_sphere:
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
             sum += 1
-            money -= MONEY_FACTOR
+            money -= random.randint(MONEY_FACTOR - 3, MONEY_FACTOR)
 
             new_vertices, x_value, z_value = setCubeVertices()
             id = dictIDBlueSphere[(sphere_x, sphere_z)]
@@ -85,7 +85,7 @@ def change_money(money, x, z):
     for (sphere_x, sphere_z) in global_green_sphere:
         if dist(x, z, sphere_x, sphere_z) <= RADIUS:
             sum += 1
-            money += MONEY_FACTOR
+            money += random.randint(MONEY_FACTOR - 3, MONEY_FACTOR)
 
             new_vertices, x_value, z_value = setPyramidVertices()
             id = dictIDGreenSphere[(sphere_x, sphere_z)]
@@ -116,7 +116,7 @@ def change_life(life, x, z):
     for (cube_x, cube_z) in global_cube:
         if dist(x, z, cube_x, cube_z) <= RADIUS:
             sum += 1
-            life -= LIFE_FACTOR
+            life -= random.randint(LIFE_FACTOR - 3, LIFE_FACTOR)
 
             new_vertices, x_value, z_value = setCubeVertices()
             id = dictIDCube[(cube_x, cube_z)]
@@ -132,7 +132,7 @@ def change_life(life, x, z):
     for (pyr_x, pyr_z) in global_pyramid:
         if dist(x, z, pyr_x, pyr_z) <= RADIUS:
             sum += 1
-            life += LIFE_FACTOR
+            life += random.randint(LIFE_FACTOR - 3, LIFE_FACTOR)
 
             new_vertices, x_value, z_value = setPyramidVertices()
             id = dictIDPyramid[(pyr_x, pyr_z)]
