@@ -261,24 +261,24 @@ def arena(fsm, perf):
         code = (green_code<<6) + (blue_code<<4) + (yellow_code<<2) + red_code
 
         next_state = fsm(code)
-
+        print("ITERATION:", i, end='\t')
         if next_state == 0:
-            # print('Turn left')
+            print('ACTION -> Turn left', end='\t')
             _cameraAngle += 270
             _cameraAngle %= 360
             direction += 1
             direction %= 4
         elif next_state == 1:
-            # print('Go straight ahead')
+            print('ACTION -> Go straight', end='\t')
             pass
         elif next_state == 2:
-            # print('Turn right')
+            print('ACTION -> Turn right', end='\t')
             _cameraAngle += 90
             _cameraAngle %= 360
             direction += 3
             direction %= 4
         elif next_state == 3:
-            # print('Go backwards')
+            print('ACTION -> Go backwards', end='\t')
             _cameraAngle += 180
             _cameraAngle %= 360
             direction += 2
@@ -330,10 +330,10 @@ def arena(fsm, perf):
         maxMoney = max(maxMoney, money)
         # print("x", x)
         # print("z", z)
-        # print('Current life', life)
-        # print('Current money', money)
+        print('CURRENT LIFE:', life, end='\t')
+        print('CURRENT MONEY:', money)
         # print("Iteration", i)
-        # sleep(1)
+        sleep(0.1)
         pygame.display.flip()
 
     pygame.quit()

@@ -5,10 +5,10 @@ from time import sleep
 from arena import arena
 
 ROBOTS_LIST = []
-NUM_ROBOTS = 64
+NUM_ROBOTS = 4
 CHROMOSOME_LENGTH = 512
 CHROMOSOME_BITS_TO_MUTATE = 32
-PERCENTAGE_ROBOTS_TO_MUTATE = 10
+PERCENTAGE_ROBOTS_TO_MUTATE = 1
 
 def constructFSM(chromosome):
 
