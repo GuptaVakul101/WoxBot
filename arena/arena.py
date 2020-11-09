@@ -8,7 +8,7 @@ from arena.constants import *
 from arena.cube import *
 from arena.pyramid import *
 from arena.wall import *
-from NeuralNetwork import NeuralNetwork
+from process_image import processImage
 from time import sleep
 from PIL import Image
 import numpy as np
@@ -153,8 +153,8 @@ def arena(fsm):
         open_cv_image = np.array(pil_image)
         open_cv_image = open_cv_image[:, :, ::-1].copy()
 
-        yellow_code = NeuralNetwork(open_cv_image, [0, 255, 255])
-        red_code = NeuralNetwork(open_cv_image, [0, 0, 255])
+        yellow_code = processImage(open_cv_image, [0, 255, 255])
+        red_code = processImage(open_cv_image, [0, 0, 255])
         code = (yellow_code<<2) + red_code
 
         next_state = fsm(code)

@@ -23,7 +23,7 @@ def splitImageIntoThree(img):
                  10: Target Color at center
                  11: Target Color at right
 '''
-def NeuralNetwork(img, color):
+def processImage(img, color):
     img_left, img_center, img_right = splitImageIntoThree(img)
     left_count = countPixelsOfColor(img_left, color)
     center_count = countPixelsOfColor(img_center, color)
@@ -41,4 +41,4 @@ def NeuralNetwork(img, color):
 
 
 # image = cv2.imread('image.jpg')
-# print(NeuralNetwork(image, [0, 255, 255]))
+# print(processImage(image, [0, 255, 255]))
