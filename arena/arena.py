@@ -59,7 +59,7 @@ def change_life(life, x, z):
 
     for (cube_x, cube_z) in global_cube:
         if dist(x, z, cube_x, cube_z) <= RADIUS:
-            life -= LIFE_FACTOR
+            life -= random.randint(LIFE_FACTOR - 3, LIFE_FACTOR)
 
             new_vertices, x_value, z_value = setCubeVertices()
             id = dictIDCube[(cube_x, cube_z)]
@@ -73,7 +73,7 @@ def change_life(life, x, z):
 
     for (pyr_x, pyr_z) in global_pyramid:
         if dist(x, z, pyr_x, pyr_z) <= RADIUS:
-            life += LIFE_FACTOR
+            life += random.randint(LIFE_FACTOR - 3, LIFE_FACTOR)
 
             new_vertices, x_value, z_value = setPyramidVertices()
             id = dictIDPyramid[(pyr_x, pyr_z)]
