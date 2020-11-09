@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 ROBOTS_LIST = []
-NUM_ROBOTS = 64
+NUM_ROBOTS = 4
 CHROMOSOME_LENGTH = 32
 CHROMOSOME_BITS_TO_MUTATE = 5
 PERCENTAGE_ROBOTS_TO_MUTATE = 0.5
@@ -80,7 +80,7 @@ def main():
             performance = arena.startLife(fsm)
             performanceList.append(performance)
             lives.append((performance, robot))
-            print("Robot #", robot, " Time Lived: ", performance)
+            print("\tRobot #", robot, " Time Lived: ", performance)
             sleep(2)
         lives.sort()
         N = len(lives)

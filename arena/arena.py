@@ -158,24 +158,24 @@ def arena(fsm):
         code = (yellow_code<<2) + red_code
 
         next_state = fsm(code)
-
+        print("ITERATION:", i, end='\t')
         if next_state == 0:
-            # print('Turn left')
+            print('ACTION -> Turn left', end='\t')
             _cameraAngle += 270
             _cameraAngle %= 360
             direction += 1
             direction %= 4
         elif next_state == 1:
-            # print('Go straight ahead')
+            print('ACTION -> Go straight', end='\t')
             pass
         elif next_state == 2:
-            # print('Turn right')
+            print('ACTION -> Turn right', end='\t')
             _cameraAngle += 90
             _cameraAngle %= 360
             direction += 3
             direction %= 4
         elif next_state == 3:
-            # print('Go backwards')
+            print('ACTION -> Go backwards', end='\t')
             _cameraAngle += 180
             _cameraAngle %= 360
             direction += 2
@@ -221,9 +221,8 @@ def arena(fsm):
 
         life = change_life(life, x, z)
         life -= 1
-        # print('Current life', life)
-        # print("Iteration", i)
-        # sleep(0.2)
+        print('CURRENT LIFE:', life)
+        sleep(0.1)
         pygame.display.flip()
 
     pygame.quit()
