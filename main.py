@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 ROBOTS_LIST = []
-NUM_ROBOTS = 64
+NUM_ROBOTS = 4
 CHROMOSOME_LENGTH = 192
 CHROMOSOME_BITS_TO_MUTATE = 5
 PERCENTAGE_ROBOTS_TO_MUTATE = 1
